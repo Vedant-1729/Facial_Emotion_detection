@@ -11,10 +11,11 @@ from keras.optimizers import Adam
 from keras.preprocessing.image import ImageDataGenerator
 
 # Initialize image data generator with rescaling
+#ImageDataGenerator is a class often used in deep learning for image data preprocessing and augmentation
 train_data_gen = ImageDataGenerator(rescale=1./255)
 validation_data_gen = ImageDataGenerator(rescale=1./255)
 
-# Preprocess all test images
+# Preprocess all train images
 train_generator = train_data_gen.flow_from_directory(
         'data/train',
         target_size=(48, 48),
@@ -22,7 +23,6 @@ train_generator = train_data_gen.flow_from_directory(
         color_mode="grayscale",
         class_mode='categorical')
 
-# Preprocess all train images
 validation_generator = validation_data_gen.flow_from_directory(
         'data/test',
         target_size=(48, 48),
@@ -49,6 +49,7 @@ emotion_model.add(Dense(1024, activation='relu'))
 emotion_model.add(Dropout(0.5))
 emotion_model.add(Dense(7, activation='softmax'))
 
+#By setting cv2.ocl.setUseOpenCL(False), you are instructing OpenCV to use the CPU (Central Processing Unit) instead of the GPU for its computations. 
 cv2.ocl.setUseOpenCL(False)
 
 emotion_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -61,7 +62,7 @@ emotion_model_info = emotion_model.fit_generator(
         validation_data=validation_generator,
         validation_steps=7178 // 64)
 
-# save model structure in jason file
+# save model structure in json file
 model_json = emotion_model.to_json()
 with open("emotion_model.json", "w") as json_file:
     json_file.write(model_json)
